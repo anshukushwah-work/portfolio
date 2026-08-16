@@ -1,0 +1,348 @@
+@import url('https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital@0;1&family=Intel+One+Mono:ital,wght@0,300..700;1,300..700&display=swap');
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Neither display face is available from a web font CDN, so both are
+ * self-hosted from src/assets/fonts/. Intel One Mono comes from Google.
+ * ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Pricedown';
+  src: url('./assets/fonts/Pricedown.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rage Italic';
+  src: url('./assets/fonts/RageItalic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-display: 'Pricedown', 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
+  --font-mono: 'Intel One Mono', ui-monospace, 'Cascadia Mono', 'Courier New', monospace;
+  --font-script: 'Rage Italic', 'Brush Script MT', 'Segoe Script', cursive;
+  /* Case study headings and flow-chart labels. */
+  --font-sans: 'Inclusive Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #191919;
+  --color-ink-deep: #0e0e0e;
+  --color-muted: #767676;
+  --color-nav-idle: #eeeeee;
+  --color-nav-border: #9d9d9d;
+  --color-card-border: #4b70db;
+  --color-badge-border: #fec460;
+  --color-badge-text: #400b86;
+  --color-footer-text: #f6f6f6;
+
+  /* OncoSearch case study — a dark, near-monochrome palette of its own. */
+  --color-cs-bg: #040404;
+  --color-cs-panel: #0e0e0e;
+  --color-cs-tile: #222222;
+  --color-cs-heading: #bbbbbb;
+  --color-cs-body: #bebebe;
+  --color-cs-bright: #e1e1e1;
+  --color-cs-button: #d6d6d6;
+  --color-cs-border: #b4b4b4;
+
+  --shadow-hard: 8px 8px 0px 0px #222;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    background: #000;
+    font-family: var(--font-mono);
+    /* Figma lays every text node out at line-height:normal; Tailwind's base
+       would otherwise impose 1.5 and make each block a few px too tall. */
+    line-height: normal;
+  }
+
+  /* Figma renders these display faces with no extra leading. */
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+  }
+}
+
+@layer components {
+  /* Vice City sunset ramp — orange → pink → deep blue, used on the
+     Case Study buttons and the gradient "Figma" link labels. */
+  .vice-gradient {
+    background-image: linear-gradient(
+      -89.64deg,
+      #fd864c 0%,
+      #dc497f 49.624%,
+      #2e2a8b 99.155%
+    );
+  }
+
+  .vice-gradient-text {
+    background-image: linear-gradient(
+      -89.68deg,
+      #fd864c 0%,
+      #dc497f 49.624%,
+      #2e2a8b 99.155%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  /* 5%-opacity version of the same ramp, behind the role badges. */
+  .vice-gradient-faint {
+    background-image: linear-gradient(
+      91.6deg,
+      rgba(75, 112, 219, 0.05) 1.08%,
+      rgba(218, 72, 209, 0.05) 34.83%,
+      rgba(254, 130, 118, 0.05) 65.4%,
+      rgba(254, 196, 96, 0.05) 99.85%
+    );
+  }
+
+  .display-shadow {
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+
+  /* The sky behind the projects section: a 5-stop vertical wash that runs the
+     full 3208px of the Figma frame. */
+  .sky-gradient {
+    background-image: linear-gradient(
+      180deg,
+      #b58bbb 0%,
+      #e79bb1 25.577%,
+      #f8ad9c 50.813%,
+      #efbcae 77.877%,
+      #b998bb 100%
+    );
+  }
+
+  /* Figma strokes are drawn *inside* the frame and don't push content in, but a
+     CSS border shifts every absolutely-positioned child by 1px. These two
+     utilities draw the same 1px stroke with zero layout impact. */
+  .figma-border {
+    box-shadow: inset 0 0 0 1px var(--figma-border-color, #191919);
+  }
+
+  .figma-border-shadow {
+    box-shadow:
+      inset 0 0 0 1px #191919,
+      8px 8px 0 0 #222;
+  }
+
+  /* Every project card is bordered with a 1px blue → magenta → coral → gold
+     ramp, not the flat blue that Figma's CSS panel reports. Drawn as a masked
+     ring so the card's padding stays exactly what Figma specifies. */
+  .gradient-border {
+    position: relative;
+    background-color: #fff;
+  }
+
+  .gradient-border::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    pointer-events: none;
+    background-image: linear-gradient(
+      90deg,
+      #4b70db 0%,
+      #da48d1 35.577%,
+      #fe8276 65.865%,
+      #fec460 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  /* Script project titles: white glyphs over a purple → cyan outside stroke.
+     Figma's 2px outside stroke maps to a 4px centred stroke painted behind the
+     white fill layer. */
+  /* The stroke layer is positioned against this inline-block, which shrink-wraps
+     the glyphs — so the two layers line up no matter what the caller does to
+     the outer element's own position or width. */
+  .script-title {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  /* Two stroke layers. The base paints a solid stroke in the gradient's mid
+     tone so an outline is always visible; the layer above repaints it with the
+     real gradient via background-clip, which only some engines extend over the
+     stroke area. Worst case the solid shows through — never a missing outline. */
+  .script-title > .script-title__stroke-base,
+  .script-title > .script-title__stroke {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    color: transparent;
+  }
+
+  .script-title > .script-title__stroke-base {
+    -webkit-text-stroke: 4px #7f2066;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+
+  .script-title > .script-title__stroke {
+    -webkit-text-stroke: 4px transparent;
+    background-image: linear-gradient(
+      90deg,
+      #400b86 0%,
+      #7f2066 22.596%,
+      #2adfff 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .script-title > .script-title__fill {
+    position: relative;
+    color: #fff;
+  }
+
+  /* Pricedown display headings: white glyphs over a solid black outside
+     stroke. Same two-layer trick as .script-title, minus the gradient.
+     --stroke is the *outside* width from Figma; CSS strokes are centred, so
+     the layer below paints at twice that. */
+  .display-title {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    --stroke: 4px;
+  }
+
+  .display-title > .display-title__stroke {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    -webkit-text-stroke: calc(var(--stroke) * 2) #000;
+    color: #000;
+  }
+
+  .display-title > .display-title__fill {
+    position: relative;
+    color: #fff;
+  }
+
+  /* The device mockups are built at their exact Figma pixel sizes, which can't
+     reflow. Below lg they are scaled down bodily inside a shell that reserves
+     the scaled height, so the card never overflows a phone screen. */
+  .mockup-shell {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+  }
+
+  @media (max-width: 1023px) {
+    .mockup-shell {
+      width: 100%;
+      height: calc(388px * 0.62);
+      overflow: hidden;
+    }
+
+    .mockup-shell > * {
+      transform: scale(0.62);
+      transform-origin: top center;
+    }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * OncoSearch case study
+   * ---------------------------------------------------------------- */
+
+  /* Figma lays Inclusive Sans out at 1.2 (a 64px heading measures 77px tall);
+     the browser's `normal` is ~1.27, which made every heading 4px too tall. */
+  .font-inclusive {
+    font-family: var(--font-sans);
+    line-height: 1.2;
+  }
+
+  /* Figma positions all nine blocks absolutely inside a 1198x9590 frame with
+     uneven gaps, so desktop pins each one to the --t/--l it was given. Below lg
+     they become a normal flow column. */
+  .cs-flow {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 72px;
+    padding: 48px 16px;
+  }
+
+  @media (min-width: 1024px) {
+    .cs-flow {
+      display: block;
+      width: 1198px;
+      height: 9590px;
+      /* 45px is where Figma starts the content frame inside the 9635px page. */
+      margin: 45px auto 0;
+      padding: 0;
+    }
+
+    .cs-flow > * {
+      position: absolute;
+      left: var(--l, 28px);
+      top: var(--t);
+      width: var(--w, 1142px);
+    }
+  }
+
+  /* Blocks that only make sense pinned (flow-chart connectors) are dropped on
+     small screens rather than stacked into the column. */
+  @media (max-width: 1023px) {
+    .cs-pinned-only {
+      display: none;
+    }
+  }
+
+  .cs-link {
+    text-decoration: underline;
+    text-decoration-skip-ink: none;
+    text-underline-position: from-font;
+  }
+
+  .cs-link:hover {
+    color: #fff;
+  }
+
+  /* The "UI ONLY" grid. On desktop each card is pinned to the --l/--t it was
+     given in Figma (two interleaved columns); below lg they fall back into a
+     single centred flow column. Custom properties are used so one set of nodes
+     serves both layouts — rendering the list twice would double-load the art. */
+  .ui-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    margin-top: 32px;
+  }
+
+  @media (min-width: 1024px) {
+    .ui-grid {
+      display: block;
+      margin-top: 0;
+    }
+
+    .ui-grid > * {
+      position: absolute;
+      left: var(--l);
+      top: var(--t);
+    }
+  }
+}
